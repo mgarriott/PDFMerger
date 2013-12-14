@@ -12,7 +12,7 @@ PDFMerger allows you to merge these two files into a single PDF document.
 - [PyPDF](https://pypi.python.org/pypi/PyPDF2/1.19)
 - [Mock](https://pypi.python.org/pypi/mock/) (to run the test suite)
 
-*Note PyPDF is **NOT** compatible with Python3, and consequently, neither is
+*Note PyPDF is NOT compatible with Python3, and consequently, neither is
 PDFMerger*
 
 You can easily install the dependencies using pip:
