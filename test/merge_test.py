@@ -6,8 +6,8 @@ sys.path.append(SRC)
 import merge
 
 class MockPdfReader:
-  def __init__(self):
-    self.pages = [None] * 3
+  def __init__(self, pages=([None] * 3)):
+    self.pages = pages
 
   def getNumPages(self):
     return len(self.pages)
@@ -22,23 +22,42 @@ class MockPdfWriter:
 
   def addPage(self, page): self.pages.append(page)
 
+class MockPage:
+  def __init__(self, text=''):
+    self.text = text
+
+  def extractText(self): return self.text
+
 class MergeTest(unittest.TestCase):
   def setUp(self):
+    def side_effect(arg, *args): return(arg)
+
     # Stub the global open method inside the merge module
-    merge.open = Mock(return_value=True)
+    merge.open = Mock(side_effect=side_effect)
 
-    self.front_pages = MockPdfReader()
-    self.back_pages = MockPdfReader()
-    self.outfile = MockPdfWriter()
+    merge.PdfFileReader = Mock(side_effect=side_effect)
 
-    merge.PdfFileReader = Mock(side_effect=[self.front_pages, self.back_pages])
-    merge.PdfFileWriter = Mock(return_value=self.outfile)
+    # Create a pdf writer and add a handle to self
+    def create_writer():
+      self.outfile = MockPdfWriter()
+      return self.outfile
+
+    merge.PdfFileWriter = Mock(side_effect=create_writer)
 
   def test_merged_file_contains_all_pages(self):
-    merge.merge('fake_doc1', 'fake_doc2', 'fake_out', True, False)
+    front_pages = MockPdfReader()
+    back_pages = MockPdfReader()
 
-    expected_len = len(self.front_pages.pages) + len(self.back_pages.pages)
+    merge.merge(front_pages, back_pages, 'fake_out', True, False)
+
+    expected_len = len(front_pages.pages) + len(back_pages.pages)
     self.assertEqual(expected_len, len(self.outfile.pages))
+
+  def test_merged_file_contains_pages_in_correct_order(self):
+    pass
+
+  def test_merging_removes_blank_pages(self):
+    pass
 
 if __name__ == '__main__':
   unittest.main()
