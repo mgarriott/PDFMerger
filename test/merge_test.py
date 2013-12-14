@@ -12,7 +12,8 @@ class MockPdfReader:
   def getNumPages(self):
     return len(self.pages)
 
-  def getPage(self, page_num): pass
+  def getPage(self, page_num):
+    return self.pages[page_num]
 
 class MockPdfWriter:
   def __init__(self):
@@ -57,7 +58,11 @@ class MergeTest(unittest.TestCase):
     pass
 
   def test_merging_removes_blank_pages(self):
-    pass
+    front_pages = MockPdfReader([MockPage('not_blank'), MockPage()])
+    back_pages = MockPdfReader([MockPage(), MockPage('not_blank')])
+
+    merge.merge(front_pages, back_pages, 'fake_out', False, False)
+    self.assertEqual(2, len(self.outfile.pages))
 
 if __name__ == '__main__':
   unittest.main()
