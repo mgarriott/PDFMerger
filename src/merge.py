@@ -1,9 +1,7 @@
 #!/usr/bin/env python
 '''
-A simple program designed to allow a user to merge a pdf document
-that contains only the front pages to a separate document that contains
-only the back pages, and merge them in the right order into a new pdf
-document.
+Merge together a pdf document containing only front pages with a separate
+document containing only back pages and save the result into a new document.
 
 @author: Matt Garriott
 '''
