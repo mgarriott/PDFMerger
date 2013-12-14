@@ -23,7 +23,6 @@ def merge(fppath, bppath, outputpath, no_delete, fed_backwards):
       outputpages.append(fpfile.getPage(i))
       if backpages:
         if fed_backwards:
-          print 'i = %d / backpage = %d' % (i, bpfile.getNumPages() - i - 1)
           outputpages.append(bpfile.getPage(bpfile.getNumPages() - i - 1))
         else:
           outputpages.append(bpfile.getPage(i))
@@ -55,5 +54,3 @@ if __name__ == '__main__':
   args = parser.parse_args()
 
   merge(args.front_pages, args.back_pages, args.output_file, args.no_delete, args.fed_backwards)
-
-
