@@ -55,7 +55,18 @@ class MergeTest(unittest.TestCase):
     self.assertEqual(expected_len, len(self.outfile.pages))
 
   def test_merged_file_contains_pages_in_correct_order(self):
-    pass
+    front_pages = MockPdfReader([MockPdfReader() for i in range(3)])
+    back_pages = MockPdfReader([MockPdfReader() for i in range(3)])
+
+    merge.merge(front_pages, back_pages, 'fake_out', True, False)
+
+    for i, page in enumerate(self.outfile.pages):
+      if i % 2 == 0:
+        expected_page = front_pages.pages[i / 2]
+      else:
+        expected_page = back_pages.pages[i / 2]
+
+      self.assertEqual(expected_page, page)
 
   def test_merging_removes_blank_pages(self):
     front_pages = MockPdfReader([MockPage('not_blank'), MockPage()])
@@ -63,6 +74,21 @@ class MergeTest(unittest.TestCase):
 
     merge.merge(front_pages, back_pages, 'fake_out', False, False)
     self.assertEqual(2, len(self.outfile.pages))
+
+  def test_merging_fed_backwards_correctly_orders_pages(self):
+    front_pages = MockPdfReader([MockPdfReader() for i in range(3)])
+    back_pages = MockPdfReader([MockPdfReader() for i in range(3)])
+
+    merge.merge(front_pages, back_pages, 'fake_out', True, True)
+
+    bp_last_index = len(back_pages.pages) - 1
+    for i, page in enumerate(self.outfile.pages):
+      if i % 2 == 0:
+        expected_page = front_pages.pages[i / 2]
+      else:
+        expected_page = back_pages.pages[bp_last_index - i / 2]
+
+      self.assertEqual(expected_page, page)
 
 if __name__ == '__main__':
   unittest.main()
